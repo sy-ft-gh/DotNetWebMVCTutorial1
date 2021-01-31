@@ -1,0 +1,52 @@
+﻿@* @model WebTutorial1.Models.Movie *@
+@model WebTutorial1.ViewModels.MovieEntry
+
+@{
+    ViewBag.Title = "Movie - 詳細";
+}
+
+<h2>詳細</h2>
+
+<div>
+    <h4>Movie</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @* DisplayNameFor でディスプレイ名(未設定の場合プロパティ名)が表示される*@
+            @Html.DisplayNameFor(model => model.Title)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Title)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ReleaseDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ReleaseDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Genre)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Genre)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Price)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Price)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("編集", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("一覧へ戻る", "Index")
+</p>

@@ -1,0 +1,60 @@
+﻿@* @model IEnumerable<WebTutorial1.Models.Movie> *@
+@model WebTutorial1.ViewModels.MoviesIndexViewModel
+
+@{
+    ViewBag.Title = "Movie - 一覧";
+}
+<h2>インデックス</h2>
+
+<p>
+    @Html.ActionLink("新規登録", "Create")
+</p>
+<table class="table">
+    <tr>
+        @* リフレクションを利用して型情報からDisplayName属性を取得 *@
+        <th>
+            @Html.DisplayNameFor(model => model.Movies.First().Title)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Movies.First().ReleaseDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Movies.First().Genre)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Movies.First().Price)
+        </th>
+        <th></th>
+    </tr>
+
+
+    @* オリジナル *@
+    @* @foreach (var item in Model) { *@
+    @* ViewModel対応 *@
+    @foreach (var item in Model.Movies) { 
+        <tr>
+            <td>
+                @Html.DisplayFor(model => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.ReleaseDate)
+                @* HTML.Helperでの書式化を行う場合 *@
+                @* @Convert.ToDateTime(Html.DisplayFor(model => item.ReleaseDate).ToString()).ToLongDateString() *@
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Genre)
+            </td>
+            <td>
+                @Html.DisplayFor(model => item.Price)
+                @* HTML.Helperでの書式化を行う場合 *@
+                @* @string.Format("{0:c}", Convert.ToDecimal(@Html.DisplayFor(model => item.Price).ToString())) *@
+            </td>
+            <td>
+                @Html.ActionLink("編集", "Edit", new { id = item.ID }) |
+                @Html.ActionLink("詳細", "Details", new { id = item.ID }) |
+                @Html.ActionLink("削除", "Delete", new { id = item.ID })
+            </td>
+        </tr>
+    }
+
+</table>
