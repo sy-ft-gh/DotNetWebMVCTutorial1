@@ -8,6 +8,17 @@
 
 <p>
     @Html.ActionLink("新規登録", "Create")
+    @*
+        @Html.BeginForm 入力フォームの開始
+        usingステートメントで組むことで@Html.EndFormの終了タグ出力を
+        省略できる。
+        ・Indexはアクション名、Moviesはコントローラ名
+        ・検索条件の為、URLでわかるようGET送信とする
+    *@
+    @using (Html.BeginForm("Index", "Movies", FormMethod.Get)) {
+        <p> Title: @Html.TextBox("SearchString") <br />   
+        <input type="submit" value="フィルター" /></p> 
+    } 
 </p>
 <table class="table">
     <tr>
@@ -16,7 +27,7 @@
             @Html.DisplayNameFor(model => model.Movies.First().Title)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.Movies.First().ReleaseDate)
+            @Html.DisplayNameFor(model => model.Movies.First().DisplayReleaseDate)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Movies.First().Genre)
@@ -37,7 +48,7 @@
                 @Html.DisplayFor(model => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(model => item.ReleaseDate)
+                @Html.DisplayFor(model => item.DisplayReleaseDate)
                 @* HTML.Helperでの書式化を行う場合 *@
                 @* @Convert.ToDateTime(Html.DisplayFor(model => item.ReleaseDate).ToString()).ToLongDateString() *@
             </td>

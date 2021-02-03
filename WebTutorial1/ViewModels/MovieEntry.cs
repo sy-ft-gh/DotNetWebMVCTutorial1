@@ -26,11 +26,22 @@ namespace WebTutorial1.ViewModels {
         [StringLength(30, ErrorMessage = "{0}は{1}文字以内で入力してください。")]
         public string Title { get; set; }
 
+        /// <summary>
+        /// リリース日のメンバ変数。表示用・入力用でプロパティを分ける
+        /// </summary>
+        private DateTime? releaseDate;
+        // リリース日の表示画面用アクセッサ(年月日表示)
         [DisplayName("リリース日")]
-        //
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:yyyy年MM月dd日}", ApplyFormatInEditMode = false)] //表示はyyyy年MM月dd日にしたい
-        public string ReleaseDate { get; set; }
+        public DateTime? DisplayReleaseDate { get => this.releaseDate; }
+
+        // リリース日の登録画面用アクセッサ(yyyy/MM/dd表示)
+        [DisplayName("リリース日")]
+        [DataType(DataType.Date)]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        public DateTime? ReleaseDate { get => this.releaseDate; set => this.releaseDate = value; }
+
 
         [DisplayName("ジャンル")]
         [StringLength(30, ErrorMessage = "{0}は{1}文字以内で入力してください。")]
@@ -53,7 +64,7 @@ namespace WebTutorial1.ViewModels {
         public MovieEntry(Movie movie) {
             this.ID = movie.ID.ToString();
             this.Title =  movie.Title;
-            this.ReleaseDate = movie.ReleaseDate?.ToLongDateString();
+            this.releaseDate = movie.ReleaseDate;
             this.Genre = movie.Genre;
             if (movie.Price != null)
                 this.Price = decimal.ToInt32((decimal)movie.Price);
@@ -69,11 +80,7 @@ namespace WebTutorial1.ViewModels {
             int testInt = 0;
             mv.ID = int.TryParse(this.ID, out testInt) ? testInt : 0;
             mv.Title = this.Title;
-            DateTime testDate;
-            if (DateTime.TryParse(this.ReleaseDate, out testDate))
-                mv.ReleaseDate = testDate;
-            else
-                mv.ReleaseDate = null;
+            mv.ReleaseDate = this.ReleaseDate;
             mv.Genre = this.Genre;
             mv.Price = this.Price;
             return mv;

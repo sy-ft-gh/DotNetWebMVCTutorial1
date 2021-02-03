@@ -16,10 +16,23 @@ namespace WebTutorial1.Controllers
         private MovieDBContext db = new MovieDBContext();
 
         // GET: Movies
-        public ActionResult Index() {
+        public ActionResult Index(string searchString) {
             // List<Movie>を返却する。
             // return View(db.Movies.ToList());
-            var model = new MoviesIndexViewModel(db.Movies.ToList());
+
+            // ラッパのMoviesIndexViewModelを用いる
+            //var model = new MoviesIndexViewModel(db.Movies.ToList());
+
+            // Movie結果一覧に絞り込み条件を追加しラッパへ
+            var movies = from m in db.Movies
+                         select m;
+
+            if (!String.IsNullOrEmpty(searchString)) {
+                movies = movies.Where(s => s.Title.Contains(searchString));
+            }
+            var model = new MoviesIndexViewModel(movies.ToList());
+
+
             return View(model);
         }
 
