@@ -16,8 +16,11 @@
         ・検索条件の為、URLでわかるようGET送信とする
     *@
     @using (Html.BeginForm("Index", "Movies", FormMethod.Get)) {
-        <p> Title: @Html.TextBox("SearchString") <br />   
-        <input type="submit" value="フィルター" /></p> 
+        <p>
+            Genre: @Html.DropDownList("movieGenre", "All")
+            Title: @Html.TextBox("SearchString") <br />
+            <input type="submit" value="フィルター" />
+        </p> 
     } 
 </p>
 <table class="table">
@@ -34,6 +37,10 @@
         </th>
         <th>
             @Html.DisplayNameFor(model => model.Movies.First().Price)
+        </th>
+        <th>
+            @* Rating 列を追加時に必要 (スキャホールディングは生成時のみ)*@
+            @Html.DisplayNameFor(model => model.Movies.First().Rating)
         </th>
         <th></th>
     </tr>
@@ -59,6 +66,10 @@
                 @Html.DisplayFor(model => item.Price)
                 @* HTML.Helperでの書式化を行う場合 *@
                 @* @string.Format("{0:c}", Convert.ToDecimal(@Html.DisplayFor(model => item.Price).ToString())) *@
+            </td>
+            <td>
+                @* Rating 列を追加時に必要 (スキャホールディングは生成時のみ)*@
+                @Html.DisplayFor(modelItem => item.Rating)
             </td>
             <td>
                 @Html.ActionLink("編集", "Edit", new { id = item.ID }) |
