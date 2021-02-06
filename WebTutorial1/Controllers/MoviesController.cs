@@ -11,10 +11,8 @@ using WebTutorial1.ViewModels;
 
 namespace WebTutorial1.Controllers
 {
-    public class MoviesController : Controller
-    {
+    public class MoviesController : Controller {
         private MovieDBContext db = new MovieDBContext();
-
         
         // GET: Movies
         /// <summary>
@@ -39,6 +37,7 @@ namespace WebTutorial1.Controllers
             //}
             //var model = new MoviesIndexViewModel(movies.ToList());
 
+
             // ジャンル一覧作成
             var GenreLst = new List<string>();
 
@@ -51,9 +50,11 @@ namespace WebTutorial1.Controllers
             // ViewBagに結果を格納
             // ※View側の@Html.DropDownListではViewBagから検索する仕様
             ViewBag.movieGenre = new SelectList(GenreLst);
-
+            
             var movies = from m in db.Movies
                          select m;
+
+            #region Add SQL Filter
             // タイトルの絞り込み条件を追加
             if (!String.IsNullOrEmpty(searchString)) {
                 movies = movies.Where(s => s.Title.Contains(searchString));
@@ -62,6 +63,8 @@ namespace WebTutorial1.Controllers
             if (!string.IsNullOrEmpty(movieGenre)) {
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
+            #endregion
+
             // Movie一覧からViewModelを作成
             var model = new MoviesIndexViewModel(movies.ToList());
 

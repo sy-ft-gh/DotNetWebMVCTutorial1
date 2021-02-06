@@ -134,13 +134,29 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202101310022538_Init.cs" />
-    <Compile Include="Migrations\202101310022538_Init.Designer.cs">
-      <DependentUpon>202101310022538_Init.cs</DependentUpon>
+    <Compile Include="Migrations\202102041320374_init.cs" />
+    <Compile Include="Migrations\202102041320374_init.Designer.cs">
+      <DependentUpon>202102041320374_init.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\202101311507198_Update1.cs" />
-    <Compile Include="Migrations\202101311507198_Update1.Designer.cs">
-      <DependentUpon>202101311507198_Update1.cs</DependentUpon>
+    <Compile Include="Migrations\202102041339593_update.cs" />
+    <Compile Include="Migrations\202102041339593_update.Designer.cs">
+      <DependentUpon>202102041339593_update.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102041420466_update2.cs" />
+    <Compile Include="Migrations\202102041420466_update2.Designer.cs">
+      <DependentUpon>202102041420466_update2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102041425005_update3.cs" />
+    <Compile Include="Migrations\202102041425005_update3.Designer.cs">
+      <DependentUpon>202102041425005_update3.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102041428104_update4.cs" />
+    <Compile Include="Migrations\202102041428104_update4.Designer.cs">
+      <DependentUpon>202102041428104_update4.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\202102060536069_update41.cs" />
+    <Compile Include="Migrations\202102060536069_update41.Designer.cs">
+      <DependentUpon>202102060536069_update41.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Movie.cs" />
@@ -210,15 +226,27 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Migrations\202101310022538_Init.resx">
-      <DependentUpon>202101310022538_Init.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Migrations\202101311507198_Update1.resx">
-      <DependentUpon>202101311507198_Update1.cs</DependentUpon>
-    </EmbeddedResource>
+    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
+    <EmbeddedResource Include="Migrations\202102041320374_init.resx">
+      <DependentUpon>202102041320374_init.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041339593_update.resx">
+      <DependentUpon>202102041339593_update.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041420466_update2.resx">
+      <DependentUpon>202102041420466_update2.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041425005_update3.resx">
+      <DependentUpon>202102041425005_update3.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102041428104_update4.resx">
+      <DependentUpon>202102041428104_update4.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202102060536069_update41.resx">
+      <DependentUpon>202102060536069_update41.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
