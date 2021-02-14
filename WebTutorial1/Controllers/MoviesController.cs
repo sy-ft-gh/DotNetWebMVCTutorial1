@@ -12,8 +12,15 @@ using WebTutorial1.ViewModels;
 namespace WebTutorial1.Controllers
 {
     public class MoviesController : Controller {
-        private MovieDBContext db = new MovieDBContext();
-        
+        private MovieDBContext db;
+
+        public MoviesController() {
+            this.db = new MovieDBContext();
+        }
+        public MoviesController(MovieDBContext db) {
+            this.db = db;
+        }
+
         // GET: Movies
         /// <summary>
         /// Moviesページトップ
