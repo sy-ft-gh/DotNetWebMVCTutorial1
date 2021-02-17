@@ -7,6 +7,7 @@ using System.Linq;
 using System.Web.Mvc;
 using Moq;
 using System.Reflection;
+using System.Threading.Tasks;
 
 using WebTutorial1.Controllers;
 using WebTutorial1.Models;
@@ -15,9 +16,31 @@ using WebTutorial1.ViewModels;
 namespace UnitTestProject1 {
     [TestClass]
     public class UnitTest1 {
+        // 参考：https://docs.microsoft.com/ja-jp/ef/ef6/fundamentals/testing/mocking
+
+        /// <summary>
+        /// ジャンル一覧取得メソッドのテスト
+        /// </summary>
+        [TestMethod]
+        public void TestgetGenreList() {
+            // ダミー値で生成したDbContextを元にコントローラを生成
+            var dummyData = createDummyMovieData();
+            var mv = new MoviesController(createDummyContext(dummyData.AsQueryable()));
+            // コントローラのPrivateObjectを生成する
+            var po = new PrivateObject(mv);
+            var movieGenre = (List<string>)po.Invoke("getGenreList");
+
+            // ①movieGenreに重複が除去されたジャンルが含まれるか
+            var dummyGenre = dummyData.ConvertAll(x => x.Genre).Distinct().ToList();
+            dummyGenre.Sort((x, y) => x.CompareTo(y));
+            movieGenre.Sort((x, y) => x.CompareTo(y));
+            // ジャンル一覧の中身がすべて同じことで検証
+            Assert.AreEqual(dummyGenre.Count(), movieGenre.Count());
+            Assert.IsTrue(dummyGenre.SequenceEqual(movieGenre));
+        }
+
         [TestMethod]
         public void TestIndex() {
-            // 参考：https://docs.microsoft.com/ja-jp/ef/ef6/fundamentals/testing/mocking
 
             // ダミー値で生成したDbContextを元にコントローラを生成
             var dummyData = createDummyMovieData();
@@ -49,16 +72,76 @@ namespace UnitTestProject1 {
 
             // ⑤ジャンル一覧の型をチェック（SelectListになっているか）
             Assert.IsInstanceOfType(viewResult.ViewBag.movieGenre, typeof(SelectList));
-            var movieGenre = viewResult.ViewBag.movieGenre as SelectList;
 
-            // ⑥movieGenreに重複が除去されたジャンルが含まれるか
-            var dummyGenre = dummyData.ConvertAll(x => x.Genre).Distinct().ToList();
-            dummyGenre.Sort((x, y) => x.CompareTo(y));
-            var itemsGenre = (List<string>)movieGenre.Items;
-            itemsGenre.Sort((x, y) => x.CompareTo(y));
-            // ジャンル一覧の中身がすべて同じことで検証
-            Assert.AreEqual(dummyGenre.Count(), itemsGenre.Count());
-            Assert.IsTrue(dummyGenre.SequenceEqual(itemsGenre));
+        }
+        /// <summary>
+        /// 同時実行テスト
+        /// Indexを同時に実行した場合
+        /// ※スレッドセーフか。他のセッションと影響がないか等確認する場合の手法
+        /// </summary>
+        [TestMethod]
+        public void TestIndexMulti() {
+            // ダミー値で生成したDbContextを元にコントローラを生成
+            Func<MoviesController> createDummy = () => {
+                var dummyData = createDummyMovieData();
+                var mv = new MoviesController(createDummyContext(dummyData.AsQueryable()));
+                return mv;
+            };
+            // 現在時の分から次の分までの時間を演算
+            Func<int> timeSpan = () => {
+                var interval = TimeSpan.FromMinutes(1);
+                // 現在時の分から次の分までの時間を演算
+                var dt1 = DateTime.Now;
+                var dt2 = new DateTime((((dt1.Ticks + interval.Ticks) / interval.Ticks) - 1) * interval.Ticks, dt1.Kind);
+                var ts = dt1 - dt2;
+                // 時間間隔(ミリ秒)数を返却
+                return ts.Milliseconds;
+            };
+            // MoviesControllerを生成しIndexメソッドの実行結果を返却するメソッドを作成
+            // （検索結果は1件ずつ求まるものを設定)
+            const string timeformat = "yyyy/MM/dd HH:mm:ss:fffffff"; // 複数回使用する固定文字は const宣言が望ましい
+            const string title1 = "When Harry Met Sally";  //1スレッド目のMovieタイトル
+            var exec1 = Task<(MoviesController, ActionResult)>.Run(async () => {
+                // コントローラ生成
+                var mv = createDummy();
+                // Delayで待機(以降非同期処理)
+                await Task.Delay(timeSpan());
+                Console.WriteLine("exec1:" + DateTime.Now.ToString(timeformat));
+                // Indexメソッドを実行
+                return (mv, mv.Index("Romantic Comedy", title1));
+            });
+            const string title2 = "Rio Bravo";  //2スレッド目のMovieタイトル
+            var exec2 = Task<(MoviesController, ActionResult)>.Run(async () => {
+                // コントローラ生成
+                var mv = createDummy();
+                // Delayで待機(以降非同期処理)
+                await Task.Delay(timeSpan());
+                Console.WriteLine("exec2:" + DateTime.Now.ToString(timeformat));
+                // Indexメソッドを実行
+                return (mv, mv.Index("Western", title2));
+            });
+
+            // 終了まで1分待機
+            Task.Run(async () => {
+                await Task.Delay(1000);
+                // 全てのタスクが終わるまで待機
+                await Task.WhenAll(exec1, exec2);
+            }).Wait(); // Task内部は非同期処理だが、Wait()で待つことで同期処理にする。
+            // なぜ非同期→同期と複雑な処理を行う？
+            // （Task.Delayが使用したいため)
+            //    (待機で代表的なThread.Sleep()はスレッドの動きをとめてしまう!）
+
+            // 1・2の結果を取得
+            var (mv1, ar1) = exec1.Result;
+            var model1 = (ar1 as ViewResult).Model as MoviesIndexViewModel;
+            var (mv2, ar2) = exec2.Result;
+            var model2 = (ar2 as ViewResult).Model as MoviesIndexViewModel;
+
+            Assert.AreEqual(model1.Movies.Count(), 1);
+            Assert.AreEqual(model1.Movies.ElementAt(0).Title, title1);
+
+            Assert.AreEqual(model2.Movies.Count(), 1);
+            Assert.AreEqual(model2.Movies.ElementAt(0).Title, title2);
         }
         /// <summary>
         /// Movieデータ（ダミー）の作成

@@ -4,6 +4,7 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using WebTutorial1.Models;
@@ -21,6 +22,15 @@ namespace WebTutorial1.Controllers
             this.db = db;
         }
 
+        /// <summary>
+        /// 登録済みのジャンル一覧を作成
+        /// </summary>
+        /// <returns>ジャンル名リスト</returns>
+        private List<string> getGenreList() {
+            return (from m in db.Movies
+                     group m by m.Genre into g
+                     select g.Key).ToList(); 
+        }
         // GET: Movies
         /// <summary>
         /// Moviesページトップ
@@ -44,20 +54,16 @@ namespace WebTutorial1.Controllers
             //}
             //var model = new MoviesIndexViewModel(movies.ToList());
 
-
             // ジャンル一覧作成
-            var GenreLst = new List<string>();
-
-            var GenreQry = from d in db.Movies
-                           orderby d.Genre
-                           select d.Genre;
-            // ジャンルの重複除外
-            GenreLst.AddRange(GenreQry.Distinct());
+            var GenreLst = getGenreList();
 
             // ViewBagに結果を格納
             // ※View側の@Html.DropDownListではViewBagから検索する仕様
+            // ※GenreLstクエリとMoviesクエリのマルチタスクは？
+            //   → 単一のDbContextが複数のクエリをマルチタスクで扱う事ができないため
+            //      シングルタスクで実行
             ViewBag.movieGenre = new SelectList(GenreLst);
-            
+
             var movies = from m in db.Movies
                          select m;
 
@@ -71,9 +77,10 @@ namespace WebTutorial1.Controllers
                 movies = movies.Where(x => x.Genre == movieGenre);
             }
             #endregion
+            var moviedata = movies.ToList();
 
             // Movie一覧からViewModelを作成
-            var model = new MoviesIndexViewModel(movies.ToList());
+            var model = new MoviesIndexViewModel(moviedata);
 
             return View(model);
         }
