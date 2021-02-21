@@ -40,6 +40,8 @@ namespace WebTutorial1.Models {
         // public MovieDBContext() : base("MovieDBContext") { }
 
         // 単体テストでのMock実装で上書きできるよう仮想化する
+        // Mockは指定クラス(基本はインタフェースクラス)を「インプリメントする」事で代価処理を作る
+        // 仮想化しておくとオーバーライドする事でインプリメントと同等の作用を与えられるできる。
         public virtual DbSet<Movie> Movies { get; set; }
     }
 }

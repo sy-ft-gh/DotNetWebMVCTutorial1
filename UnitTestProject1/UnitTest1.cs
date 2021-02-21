@@ -187,7 +187,9 @@ namespace UnitTestProject1 {
             // DbSetのMock
             var mockDbSet = new Mock<DbSet<Movie>>();
             // DbSetとテスト用データを紐付け
-            // ※Queryableを正常に動作させるためSQLServerからではなく、ListからのLinqとしてDbSetを構築する
+            // ※Queryableを正常に動作させるため、IQueryableからの継承部分を
+            // DBSetの設定ではなく、Queryableの設定で構築する
+            // →DBからのクエリではなく、dummyDataからのクエリにすげかわる
             mockDbSet.As<IQueryable<Movie>>().Setup(m => m.Provider).Returns(dummyData.Provider);
             mockDbSet.As<IQueryable<Movie>>().Setup(m => m.Expression).Returns(dummyData.Expression);
             mockDbSet.As<IQueryable<Movie>>().Setup(m => m.ElementType).Returns(dummyData.ElementType);
