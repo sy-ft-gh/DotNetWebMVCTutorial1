@@ -21,7 +21,7 @@ namespace UnitTestProject1 {
         /// <summary>
         /// ジャンル一覧取得メソッドのテスト
         /// </summary>
-        [TestMethod]
+        [TestMethod, TestCategory("Index")]
         public void TestgetGenreList() {
             // ダミー値で生成したDbContextを元にコントローラを生成
             var dummyData = createDummyMovieData();
@@ -39,7 +39,7 @@ namespace UnitTestProject1 {
             Assert.IsTrue(dummyGenre.SequenceEqual(movieGenre));
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Index")]
         public void TestIndex() {
 
             // ダミー値で生成したDbContextを元にコントローラを生成
